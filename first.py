@@ -1,1 +1,6 @@
-mit=1;
+mit = 1;
+
+print("Hello")
+
+for i in range(5):
+    print("Hello ")
