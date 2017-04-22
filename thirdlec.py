@@ -51,10 +51,10 @@
 # The number guessing code
 # Six tries it is! No more than that!
 
-epsilon = 0.1;
+epsilon = 0.1
 print("This is a cube root solver!")
 number = int(input("Enter a number for which you wish to find a cube root: "))
-guess = int(input("Make a guess: "))
+guess = 1
 
 cr = guess
 j = 1
