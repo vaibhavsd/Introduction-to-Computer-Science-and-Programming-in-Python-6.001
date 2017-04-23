@@ -148,6 +148,7 @@ def hangman(secret_word):
     Follows the other limitations detailed in the problem write-up.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
+    #########################################################################
     print("\n \n")
     print("Welcome to the game Hangman!")
     print("I am thinking of a word that is", len(secret_word),"letters long.")
@@ -224,6 +225,8 @@ def hangman(secret_word):
         print("\n \nSorry, you ran out of guesses.")
         print("The word was:", secret_word)
 
+    ##############################################################################
+
 
 
 
@@ -248,7 +251,27 @@ def match_with_gaps(my_word, other_word):
         False otherwise: 
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    #######################################################
+    # Check the lengths
+    guess= my_word
+    actual= other_word
+    guess_len= len(guess.replace(" ", ""))
+    actual_len= len(actual.replace(" ", ""))
+    if guess_len != actual_len:
+        return False
+
+    guessword= guess.replace(" ", "")
+    space= "_"
+    n= len(guessword)
+    for i in range(n):
+        if guessword[i] is space:
+            pass
+        elif guessword[i] is not actual[i]:
+            return False
+    return True
+    #########################################################
+
+
 
 
 
@@ -263,7 +286,20 @@ def show_possible_matches(my_word):
 
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    ##############################################################
+    guess= my_word
+    my_wordlist= wordlist
+    list= ""
+    for i in range(len(my_wordlist)):
+        if match_with_gaps(guess, my_wordlist[i]):
+            list += my_wordlist[i]
+            list += " "
+    if not list:
+        return "No matches found"
+    else:
+        return list
+    ##############################################################
+
 
 
 
@@ -295,7 +331,93 @@ def hangman_with_hints(secret_word):
     Follows the other limitations detailed in the problem write-up.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    #########################################################################
+    print("\n \n")
+    print("Welcome to the game Hangman (with hints *)!")
+    print("I am thinking of a word that is", len(secret_word),"letters long.")
+    print("............")
+
+    guess_count = 6
+    guess_list =""
+    warnings= 4
+    game_status = 0
+    letters_guessed = ""
+    go_forward = 1
+    vowels= "aeiou"
+
+    while guess_count>0 and game_status is 0:
+    # for i in range(10):
+        go_forward =1
+        print("\n \n")
+        print("Word:", get_guessed_word(secret_word, letters_guessed))
+        if guess_count>1:
+            print("You have", guess_count,"guesses left.")
+        else:
+            print("You are left with one last guess.")
+
+        print("Available letters: ", get_available_letters(letters_guessed))
+
+        guess= input("Please guess a letter: ")
+        if guess is "*":
+            lettr_guessed= letters_guessed.replace("_ ", "")
+            if not lettr_guessed:
+                print("You need to guess at least one letter before using hints")
+                go_forward =0
+            else:
+                print("Possible word matches are: ")
+                print(show_possible_matches(get_guessed_word(secret_word, letters_guessed)))
+                go_forward = 0
+
+        elif str.isalpha(guess):
+            guess= str.lower(guess)
+        else:
+            print("That is not a valid letter.")
+            if warnings>0:
+                warnings -= 1
+                print("You have", warnings, "warnings left")
+                go_forward= 0
+            else:
+                guess_count -=1
+                print("You lose a guess! ")
+                print("You have", warnings, "warnings left")
+                go_forward = 0
+
+        if guess in guess_list:
+            print("You have already guessed that letter.")
+            if warnings>0:
+                warnings -= 1
+                print("You have", warnings, "warnings left")
+                go_forward= 0
+            else:
+                guess_count -=1
+                print("You lose a guess! ")
+                print("You have", warnings, "warnings left")
+                go_forward = 0
+
+
+        if go_forward is 1:
+            guess_list += guess
+            if guess in secret_word:
+                letters_guessed += guess
+                print("Good guess:", get_guessed_word(secret_word, letters_guessed))
+                print("............")
+            else:
+                print("Oops! That letter is not in my word:", get_guessed_word(secret_word, letters_guessed))
+                if guess in vowels:
+                    guess_count -= 2
+                else:
+                    guess_count -= 1
+
+
+        if is_word_guessed(secret_word, letters_guessed):
+            game_status =1
+            print("\n \nWohoo! You have won the game!")
+            print("Your total score for this game is:", guess_count*len(''.join(set(secret_word))))
+
+    if game_status is 0:
+        print("\n \nSorry, you ran out of guesses.")
+        print("The word was:", secret_word)
+
 
 
 
@@ -311,10 +433,11 @@ if __name__ == "__main__":
     # To test part 2, comment out the pass line above and
     # uncomment the following two lines.
     
-    secret_word = choose_word(wordlist)
-    secret_word = "tact"
+    # secret_word = choose_word(wordlist)
+    # secret_word = "tact"
     # print(secret_word)
-    hangman(secret_word)
+    # hangman(secret_word)
+
 
 ###############
     
@@ -323,3 +446,12 @@ if __name__ == "__main__":
     
     secret_word = choose_word(wordlist)
     hangman_with_hints(secret_word)
+
+    # print(match_with_gaps("te_ t", "tact"))
+    # print(match_with_gaps("a_ _ le", "banana"))
+    # print(match_with_gaps("a_ _ le", "apple"))
+    # print(match_with_gaps("a_ ple", "apple"))
+    #
+    # print(show_possible_matches("t_ _ t"))
+    # print(show_possible_matches("abbbb_ "))
+    # print(show_possible_matches("a_ pl_ "))
