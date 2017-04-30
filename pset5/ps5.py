@@ -74,10 +74,10 @@ class NewsStory(object):
 
     def get_link(self):
         return self.link
-        # pass
 
     def get_pubdate(self):
         return self.pubdate
+
 
 
 #======================
@@ -97,21 +97,65 @@ class Trigger(object):
 
 # Problem 2
 class PhraseTrigger(Trigger):
-    Trigger.__init__()
 
-    def __init__(self, input_string):
-        pass
+    def __init__(self, benchmark_string):
 
-    def is_phrase_in(self, input_string):
-        pass
-    
+
+        benchmark_string = benchmark_string.lower()
+        self.input_string= benchmark_string
+
+    def is_phrase_in(self, string_argument):
+        punctuations= string.punctuation
+
+        string_argument= string_argument.lower()
+        new_string= ""
+        for chari in string_argument:
+            if chari not in punctuations:
+                new_string += chari
+            else:
+                new_string += " "
+        this_list= new_string.split()
+        this_string= " ".join(this_list)
+        # print(this_string)
+
+        if self.input_string not in this_string:
+            return False
+
+        b_list= self.input_string.split()
+
+        intersection_list= list(set(b_list).intersection(this_list))
+        # print(intersection_list)
+
+        for element in b_list:
+            if element not in intersection_list:
+                return False
+
+        return True
 
 
 # Problem 3
-# TODO: TitleTrigger
+class TitleTrigger(PhraseTrigger):
+
+    def evaluate(self, story_object):
+
+        random_string= NewsStory.get_title(story_object)
+        if PhraseTrigger.is_phrase_in(self,random_string):
+            return True
+        else:
+            return False
+
+
 
 # Problem 4
-# TODO: DescriptionTrigger
+class DescriptionTrigger(PhraseTrigger):
+
+    def evaluate(self, story_object):
+
+        random_string= NewsStory.get_description(story_object)
+        if PhraseTrigger.is_phrase_in(self,random_string):
+            return True
+        else:
+            return False
 
 # TIME TRIGGERS
 
@@ -121,8 +165,45 @@ class PhraseTrigger(Trigger):
 #        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
 #        Convert time from string to a datetime before saving it as an attribute.
 
+class TimeTrigger(Trigger):
+
+    def __init__(self, time_string):
+        self.benchmark_string= time_string
+
+    # def datetimeobject(self,time_string):
+    #     return time.strptime(time_string, "%d %b %Y %H:%M:%S")
+        # self.day= tame.tm_mday
+        # self.month= tame.tm_month
+        # self.year= tame.tm_year
+        # self.hour= tame.tm_hour
+        # self.min= tame.tm_min
+        # self.sec= tame.tm_sec
+
 # Problem 6
 # TODO: BeforeTrigger and AfterTrigger
+
+class BeforeTrigger(TimeTrigger):
+
+    def evaluate(self, story_object):
+        stringoftime= NewsStory.get_pubdate(story_object)
+        benchmark_time = datetime.strptime(self.benchmark_string, "%d %b %Y %H:%M:%S")
+
+        if stringoftime< benchmark_time:
+            return True
+        else:
+            return False
+
+
+class AfterTrigger(TimeTrigger):
+
+    def evaluate(self, story_object):
+        stringoftime= NewsStory.get_pubdate(story_object)
+        benchmark_time = datetime.strptime(self.benchmark_string, "%d %b %Y %H:%M:%S")
+
+        if stringoftime> benchmark_time:
+            return True
+        else:
+            return False
 
 
 # COMPOSITE TRIGGERS
