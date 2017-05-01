@@ -185,9 +185,10 @@ class TimeTrigger(Trigger):
 class BeforeTrigger(TimeTrigger):
 
     def evaluate(self, story_object):
-        stringoftime= NewsStory.get_pubdate(story_object)
+        stringoftime = NewsStory.get_pubdate(story_object)
+        stringoftime.replace(tzinfo=None)
         benchmark_time = datetime.strptime(self.benchmark_string, "%d %b %Y %H:%M:%S")
-
+        benchmark_time.replace(tzinfo=None)
         if stringoftime< benchmark_time:
             return True
         else:
@@ -198,8 +199,9 @@ class AfterTrigger(TimeTrigger):
 
     def evaluate(self, story_object):
         stringoftime= NewsStory.get_pubdate(story_object)
+        stringoftime.replace(tzinfo=None)
         benchmark_time = datetime.strptime(self.benchmark_string, "%d %b %Y %H:%M:%S")
-
+        benchmark_time.replace(tzinfo=None)
         if stringoftime> benchmark_time:
             return True
         else:
@@ -210,14 +212,34 @@ class AfterTrigger(TimeTrigger):
 
 # Problem 7
 # TODO: NotTrigger
+class NotTrigger(Trigger):
+    def __init__(self, trigger):
+        self.trigger= trigger
+
+    def evaluate(self, story_object):
+        return not self.trigger.evaluate(story_object)
+
 
 # Problem 8
 # TODO: AndTrigger
+class AndTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
+
+    def evaluate(self, story_object):
+        return self.trigger1.evaluate(story_object) and self.trigger2.evaluate(story_object)
+
 
 # Problem 9
 # TODO: OrTrigger
+class OrTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.trigger1 = trigger1
+        self.trigger2 = trigger2
 
-
+    def evaluate(self, story_object):
+        return self.trigger1.evaluate(story_object) or self.trigger2.evaluate(story_object)
 #======================
 # Filtering
 #======================
